@@ -1,0 +1,12 @@
+{
+  "node_revision": "3df9e0a786c7b103a3da88d1c3881efc81706255",
+  "lattice_revision": "dda2d852429a27be6043599b63bde81530cd9514",
+  "source_sha256": {
+    "Sources/LatticeMinerCore/MinerLoopLogic.swift": "c4d10654a173aa3717fa049e535a5407d8797fc431adce6a829ddb72ef813bc1",
+    "Sources/LatticeMinerCore/ProofOfWork.swift": "c1bb1a692c865b1ec6a219179cb18d5034aadc720b556555cc10a774d895cd59",
+    "Sources/LatticeMiningCoordinator/MiningCoordinator.swift": "779f91f571dacd1329055313a3e64f4864040b853617b3c3eaa8590310066dd7"
+  },
+  "package_resolved_sha256": "958f69bd3ec734a372e8cd94e3d09d593674a1025979a2abe2b45a6f08cfc9a6",
+  "fixture_sha256": "a9607c300e364d2d516debdaefecd40d4007a21d0a2b31c64d4097a46d888822",
+  "scope": "Actual unchanged miner core/coordinator with deterministic injected worker/node; no live HTTP/mining."
+}

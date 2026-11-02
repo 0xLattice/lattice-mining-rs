@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "scope": "disposable loopback-only node, coordinator and external CPU worker",
+  "binaries": {
+    "lattice-node": "44f70eb4fe3563dbfcdfe2861cb9f0094734ade3539f4d632af8025baafb2cd8",
+    "lattice-mining-coordinator": "be4bc7c8ac30608228d9221464d670b2673c5ce81caf64b0d8c6ac2430347838",
+    "lattice-miner-gpu": "47defdff5894a496dee39d14085a421351b50f01284afccd4bd9fa1abcabb710"
+  },
+  "genesis_fixture_sha256": "ef368f44f00498b1fcac30f882bb1bb73f04d1712bcfaf8e775d099da2ee3f4e",
+  "harness_sha256": "369a8d5ec04dc5955c478bc89221ec05aed9f2196c72fe0be10c44d1367b43bf",
+  "unauthorized": {
+    "result": "nodeFailed",
+    "error": "node authorization failed: HTTP 401"
+  },
+  "initial_mining": {
+    "result": "submitted",
+    "workId": "bafyreidzegey4cxyvtvayynftgf3ouwuj7tjt6v45hqdcog64ttgd5gmyu",
+    "nonce": 0,
+    "accepted": true,
+    "disposition": "canonicalized",
+    "tipCID": "bafyreidzegey4cxyvtvayynftgf3ouwuj7tjt6v45hqdcog64ttgd5gmyu"
+  },
+  "stale": {
+    "result": "stale",
+    "workId": "bafyreiahrscur4pdvc75dja4qmgg4slyrkufktt2pvpzq7tn53ciixs2ru"
+  },
+  "cancelled": {
+    "result": "cancelled"
+  },
+  "resumed_mining": {
+    "result": "submitted",
+    "workId": "bafyreidnlswwt53m4e5izaou7zfrjz5lnldinhk5xqg7lfnumsg3n4seke",
+    "nonce": 0,
+    "accepted": true,
+    "disposition": "canonicalized",
+    "tipCID": "bafyreidnlswwt53m4e5izaou7zfrjz5lnldinhk5xqg7lfnumsg3n4seke"
+  },
+  "durable_height": "3",
+  "durable_tip": "bafyreidnlswwt53m4e5izaou7zfrjz5lnldinhk5xqg7lfnumsg3n4seke",
+  "gated_worker_teardown": true,
+  "timing_scope": "stale/cancel cases run the real CPU worker then withhold its result; successful mining uses the worker directly"
+}

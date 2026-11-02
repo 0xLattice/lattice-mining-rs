@@ -1,0 +1,11 @@
+{
+  "repository": "0xLattice/lattice-node",
+  "revision": "3df9e0a786c7b103a3da88d1c3881efc81706255",
+  "sources": {
+    "Sources/LatticeMinerCore/MinerLoopLogic.swift": "c4d10654a173aa3717fa049e535a5407d8797fc431adce6a829ddb72ef813bc1",
+    "Sources/LatticeMinerCore/ProofOfWork.swift": "c1bb1a692c865b1ec6a219179cb18d5034aadc720b556555cc10a774d895cd59",
+    "Sources/LatticeMiningCoordinator/MiningCoordinator.swift": "779f91f571dacd1329055313a3e64f4864040b853617b3c3eaa8590310066dd7",
+    "Sources/LatticeMiningCoordinator/MiningWorkerProcess.swift": "790e81795449a39829a084bdd7a544faf8fc51f8161f4e16676d77ef496b4f83",
+    "Sources/LatticeMiningCoordinatorTool/main.swift": "d319d19346442f0861d0bef654b36e987ee456a442c20a0fe77c12f668263b1f"
+  }
+}
