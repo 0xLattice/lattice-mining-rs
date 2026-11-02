@@ -9,20 +9,25 @@ fn work() -> Arc<Work> {
         prefix: vec![1],
         target: [255; 32],
         targets: vec![[255; 32]],
-        lifetime: Some(Duration::from_millis(150)),
+        lifetime: None,
         stale_token: "stable".into(),
     })
 }
 async fn run(code: &str) -> Result<Option<WorkerResult>, Error> {
+    run_for(code, None).await
+}
+async fn run_for(code: &str, lifetime: Option<Duration>) -> Result<Option<WorkerResult>, Error> {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("worker.py");
     std::fs::write(&path, format!("import sys,json,time,os\n{code}\n")).unwrap();
-    let mut worker = ProcessWorker::new("p", "/usr/bin/python3".into());
+    let mut worker = ProcessWorker::new("p", "python3".into());
     worker.arguments = vec![path.to_string_lossy().into_owned()];
+    let mut assignment = (*work()).clone();
+    assignment.lifetime = lifetime;
     tokio::time::timeout(
-        Duration::from_secs(2),
+        Duration::from_secs(10),
         worker.search(
-            work(),
+            Arc::new(assignment),
             NonceRange {
                 start_nonce: u64::MAX,
                 count: 2,
@@ -64,10 +69,13 @@ async fn stdout_flood_and_deadline_fail_bounded() {
             .is_err()
     );
     assert!(
-        run("sys.stdout.close();os.close(1);time.sleep(10)")
-            .await
-            .unwrap()
-            .is_none()
+        run_for(
+            "sys.stdout.close();os.close(1);time.sleep(10)",
+            Some(Duration::from_secs(1))
+        )
+        .await
+        .unwrap()
+        .is_none()
     );
 }
 #[tokio::test]
@@ -76,7 +84,7 @@ async fn cancellation_kills_descendant_group() {
     let pidfile = dir.path().join("pid");
     let script = dir.path().join("fork.py");
     std::fs::write(&script,format!("import os,time\np=os.fork()\nif p==0:\n open({:?},'w').write(str(os.getpid()))\n time.sleep(30)\nelse: time.sleep(30)\n",pidfile.to_str().unwrap())).unwrap();
-    let mut worker = ProcessWorker::new("p", "/usr/bin/python3".into());
+    let mut worker = ProcessWorker::new("p", "python3".into());
     worker.arguments = vec![script.to_str().unwrap().into()];
     let cancel = CancellationToken::new();
     let token = cancel.clone();
@@ -94,13 +102,21 @@ async fn cancellation_kills_descendant_group() {
             )
             .await
     });
-    for _ in 0..100 {
-        if pidfile.exists() {
-            break;
+    // Synchronize with the child, not a platform-specific interpreter startup
+    // latency. An empty just-created pidfile does not establish readiness.
+    let pid: i32 = tokio::time::timeout(Duration::from_secs(10), async {
+        loop {
+            if let Some(pid) = std::fs::read_to_string(&pidfile)
+                .ok()
+                .and_then(|value| value.parse::<i32>().ok())
+            {
+                break pid;
+            }
+            tokio::time::sleep(Duration::from_millis(5)).await;
         }
-        tokio::time::sleep(Duration::from_millis(5)).await;
-    }
-    assert!(pidfile.exists());
+    })
+    .await
+    .expect("worker descendant did not become ready");
     cancel.cancel();
     assert!(
         tokio::time::timeout(Duration::from_secs(2), task)
@@ -110,7 +126,6 @@ async fn cancellation_kills_descendant_group() {
             .unwrap()
             .is_none()
     );
-    let pid: i32 = std::fs::read_to_string(pidfile).unwrap().parse().unwrap();
     for _ in 0..100 {
         let output = std::process::Command::new("ps")
             .args(["-o", "stat=", "-p", &pid.to_string()])
